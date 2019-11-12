@@ -194,6 +194,7 @@ namespace SmvInterceptorWrapper
                         debugTimeout = DEFAULT_DEBUG_TIMEOUT;
                     }
 
+                    // Allow 5 minutes for this, then continue; don't hang indefinitely on debug
                     p.WaitForExit(debugTimeout);
 
                     // Call ESPSMVPRINT_AUX
@@ -219,7 +220,7 @@ namespace SmvInterceptorWrapper
                             File.WriteAllText(cfgErrorPath, p.StandardError.ReadToEnd());
 
                             // Allow 5 minutes for each, then continue; don't hang indefinitely on debug
-                            p.WaitForExit(debugTimeout);
+                            p.WaitForExit(5 * 60 * 1000);
                         }
                     }
                 }
