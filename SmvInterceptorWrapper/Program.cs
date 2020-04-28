@@ -279,7 +279,7 @@ namespace SmvInterceptorWrapper
 
                 foreach (string file in rawcfgfFiles)
                 {
-                    psi = new ProcessStartInfo(Environment.ExpandEnvironmentVariables("slamcl_writer.exe"), "--smv " + file + " " + (file + ".obj") );
+                    psi = new ProcessStartInfo(Environment.ExpandEnvironmentVariables("slamcl_writer.exe"), "--smv " + '"' + file + '"' + " " + ('"' + file + ".obj\"") );
                     psi.RedirectStandardError = true;
                     psi.RedirectStandardOutput = true;
                     psi.UseShellExecute = false;
@@ -289,14 +289,28 @@ namespace SmvInterceptorWrapper
 
                     //Console.WriteLine("iwrap: link.exe --> " + psi.FileName + " " + psi.Arguments);
 
-                    p = System.Diagnostics.Process.Start(psi);
-                    File.AppendAllText(outDir + "\\smvlink1.log", p.StandardOutput.ReadToEnd());
-                    File.AppendAllText(outDir + "\\smvlink1.log", p.StandardError.ReadToEnd());
+                    try
+                    {
+                        p = System.Diagnostics.Process.Start(psi);
+                        File.AppendAllText(outDir + "\\smvlink1.log", p.StandardOutput.ReadToEnd());
+                        File.AppendAllText(outDir + "\\smvlink1.log", p.StandardError.ReadToEnd());
 
-                    p.WaitForExit();
+                        p.WaitForExit();
 
-                    WriteInterceptorLog("EXIT: slamcl_writer.exe.  Exit code: " + p.ExitCode);
-                    if (p.ExitCode != 0) return p.ExitCode;
+                        WriteInterceptorLog("EXIT: slamcl_writer.exe.  Exit code: " + p.ExitCode);
+                        if (p.ExitCode != 0) return p.ExitCode;
+                    }
+                    catch (System.ComponentModel.Win32Exception w)
+                    {
+                        WriteInterceptorLog(w.Message);
+                        WriteInterceptorLog(w.ErrorCode.ToString());
+                        WriteInterceptorLog(w.NativeErrorCode.ToString());
+                        WriteInterceptorLog(w.StackTrace);
+                        WriteInterceptorLog(w.Source);
+                        Exception e = w.GetBaseException();
+                        WriteInterceptorLog(e.Message);
+                        return -5;
+                    }
                 }
 
                 files = files.Select(x => x + ".rawcfgf.obj").ToArray();
