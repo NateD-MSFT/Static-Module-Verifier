@@ -206,7 +206,7 @@ namespace SmvInterceptorWrapper
                             // If we are not in an SDV environment, this is pointless; break
                             if (!File.Exists(espSmvPrintPath)) break;
 
-                            psi = new ProcessStartInfo(espSmvPrintPath, f.FullName);
+                            psi = new ProcessStartInfo(espSmvPrintPath, '"' + f.FullName + '"');
                             psi.RedirectStandardOutput = true;
                             psi.RedirectStandardError = true;
                             psi.UseShellExecute = false;
