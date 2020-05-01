@@ -302,6 +302,7 @@ namespace SmvInterceptorWrapper
                     }
                     catch (System.ComponentModel.Win32Exception w)
                     {
+                        // In event of a Win32 exception, dump useful info
                         WriteInterceptorLog(w.Message);
                         WriteInterceptorLog(w.ErrorCode.ToString());
                         WriteInterceptorLog(w.NativeErrorCode.ToString());
@@ -309,7 +310,7 @@ namespace SmvInterceptorWrapper
                         WriteInterceptorLog(w.Source);
                         Exception e = w.GetBaseException();
                         WriteInterceptorLog(e.Message);
-                        return -5;
+                        return w.ErrorCode;
                     }
                 }
 
